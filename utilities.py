@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 from pymatgen.io.cif import CifWriter
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.electronic_structure.plotter import BSPlotter
 #Takes a pymatgen.core.structure.Structure object and a symprec.
 #  Uses spglib to perform various symmetry finding operations.
 
@@ -69,6 +70,15 @@ class Retriever:
             path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
             df.to_csv(path_file)
         
+    def get_bandstructure(self, material_id):
+        
+        results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
+        formula = results[0]['pretty_formula']
+        view = input(f'Do you want look on band structure of the {formula} ? Y/N ')
+        if view.lower() == 'y':
+            bs = self.mpr.get_bandstructure_by_material_id(f'{material_id}')
+            print(f'Band gap info {bs.get_band_gap()}')
+            BSPlotter(bs).show()
 
     def conv_str_cif_retriever(self, material_id):
 

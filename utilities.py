@@ -19,7 +19,7 @@ class Retriever:
         self.mpr = MPRester(header['API_KEY'])
          
     def writer(self):
-        '''Writes correct API key into the config.json file'''
+        ''' Writes correct API key into the config.json file '''
         
         with open('config.json', 'w') as t:
             new_key = input("Enter valid MP API key: ")
@@ -28,9 +28,7 @@ class Retriever:
             print('New key is established!\nRe-run code plz..') 
 
     def check_api_key(self, validity=True):
-        """
-        Managing to write correct API_KEY into config.json file
-        """
+        """ Managing to write correct API_KEY into config.json file """
         
         if validity == True:        
             req = input('Any manipulations with config.file will erase it previous content!\nDo you want to proceed?\nY/N ')        
@@ -58,7 +56,10 @@ class Retriever:
             return header
 
     def element_q(self, formula):
-
+        """ This method retrievs query with required element structure
+            formula: str
+        """
+        
         results = self.mpr.query({'pretty_formula':f"{formula}"}, properties=['material_id', 'pretty_formula', 'spacegroup.crystal_system', 'spacegroup.symbol'])
         df=pd.DataFrame.from_records(results)
         print(df)
@@ -71,16 +72,23 @@ class Retriever:
             df.to_csv(path_file)
         
     def get_bandstructure(self, material_id):
+        """ This method retrievs and draws band structure of the  required element
+            material_id: str
+        """
         
         results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
         formula = results[0]['pretty_formula']
-        view = input(f'Do you want look on band structure of the {formula} ? Y/N ')
+        view = input(f'Do you want to look on band structure of the {formula} ? Y/N ')
         if view.lower() == 'y':
             bs = self.mpr.get_bandstructure_by_material_id(f'{material_id}')
             print(f'Band gap info {bs.get_band_gap()}')
             BSPlotter(bs).show()
 
     def conv_str_cif_retriever(self, material_id):
+        """ This method retrievs and retrieves the convenient structure
+            of the  required element and saves it as cif_files/... .cif file
+            material_id: str
+        """
 
         structure = self.mpr.get_structure_by_material_id(f'{material_id}')
         space_ga = SpacegroupAnalyzer(structure)

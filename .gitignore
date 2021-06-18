@@ -125,3 +125,6 @@ config.json
 # mkdocs documentation
 /site
 .vscode
+
+cif_files/
+csv_data_set_for_elements/

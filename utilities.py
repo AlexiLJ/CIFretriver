@@ -11,32 +11,15 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.electronic_structure.plotter import BSPlotter
 #Takes a pymatgen.core.structure.Structure object and a symprec.
 #  Uses spglib to perform various symmetry finding operations.
+import logging.config
 
 class Retriever:
     
-    def __init__(self): 
-        self.logger = logging.getLogger('CIF__retr')
-        self.logger.setLevel(logging.DEBUG)
-            # create logger
-    
-
-        # create console handler and set level to debug
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-
-        # create formatter
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-        # add formatter to ch
-        ch.setFormatter(formatter)
-
-        # add ch to logger
-        self.logger.addHandler(ch)
+    def __init__(self):
+        logging.config.fileConfig('logging.conf')
         header = self.API_checker()
         self.mpr = MPRester(header['API_KEY'])
         #https://docs.python.org/3/howto/logging.html
-
-
          
     def writer(self):
         ''' Writes correct API key into the config.json file '''
@@ -45,7 +28,7 @@ class Retriever:
             new_key = input("Enter valid MP API key: ")
             key_string = "{" + '"API_KEY":' + f'"{new_key}"' + "}"
             t.write(key_string)
-            print('New key is established!\nRe-run code plz..') 
+            logging.info("New key is established!\n \t\t\t\t  Re-run code plz.. \n")  
 
     def check_api_key(self, validity=True):
         """ Managing to write correct API_KEY into config.json file """
@@ -90,6 +73,7 @@ class Retriever:
         if save.lower() == 'y':
             if not os.path.isdir('csv_data_set_for_elements'):
                 os.mkdir('csv_data_set_for_elements')
+                logging.info("creating csc_data_set_for_elements \n")
             path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
             df.to_csv(path_file)
         
@@ -101,9 +85,9 @@ class Retriever:
         results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
         formula = results[0]['pretty_formula']
         view = input(f'Do you want to look on band structure of the {formula} ? Y/N ')
-        if view.lower() == 'y':
+        if view.lower() == 'y':    
             bs = self.mpr.get_bandstructure_by_material_id(f'{material_id}')
-            print(f'Band gap info {bs.get_band_gap()}')
+            logging.info("Plotting bandstructure")
             BSPlotter(bs).show()
 
     def conv_str_cif_retriever(self, material_id):
@@ -118,6 +102,7 @@ class Retriever:
         write = CifWriter(conventional_structure)
         if not os.path.isdir('cif_files'):
             os.mkdir('cif_files')
+            logging.info("creating cif_files directory \n")
         results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
         formula=results[0]['pretty_formula']
         file_path = os.path.join('cif_files', f'{formula}_{material_id}_conventional_standart.cif')

@@ -24,10 +24,10 @@ class Retriever:
     def writer(self):
         ''' Writes correct API key into the config.json file '''
         
-        with open('config.json', 'w') as t:
+        with open('config.json', 'w') as conf:
             new_key = input("Enter valid MP API key: ")
             key_string = "{" + '"API_KEY":' + f'"{new_key}"' + "}"
-            t.write(key_string)
+            conf.write(key_string)
             logging.info("New key is established!\n \t\t\t\t  Re-run code plz.. \n")  
 
     def check_api_key(self, validity=True):
@@ -48,13 +48,12 @@ class Retriever:
                     raise TypeError 
                 test = requests.get('https://www.materialsproject.org/rest/v2/api_check', header)
                 if not test.json()['response']['api_key_valid']:
-                    #logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
                     logging.critical('Invalid MP API KEY!')
-                    # print('Invalid MP API KEY')
                     self.check_api_key(validity=False)
                     exit()
+                logging.info("Identification was succesful")
             except (TypeError, json.decoder.JSONDecodeError):
-                print('Make sure you provided correct API and config.json file')
+                logging.warn('Make sure you provided correct API and config.json file')
                 self.check_api_key()
                 exit()       
         
@@ -76,6 +75,7 @@ class Retriever:
                 logging.info("creating csc_data_set_for_elements \n")
             path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
             df.to_csv(path_file)
+            logging.info("Data query has been saved \n")
         
     def get_bandstructure(self, material_id):
         """ This method retrievs and draws band structure of the  required element
@@ -107,6 +107,7 @@ class Retriever:
         formula=results[0]['pretty_formula']
         file_path = os.path.join('cif_files', f'{formula}_{material_id}_conventional_standart.cif')
         write.write_file(file_path)
+        logging.info(f"'{formula}_{material_id}_conventional_standart.cif' has been saved \n")
 
  
 

@@ -102,4 +102,6 @@ class Retriever:
         write.write_file(file_path)
 
  
-
+if __name__ == "__main__": 
+    test = Retriever()
+    print(test.API_checker())

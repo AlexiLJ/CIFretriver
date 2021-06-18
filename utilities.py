@@ -4,6 +4,7 @@ from pymatgen import MPRester
 import os
 import json
 import requests
+import logging
 import pandas as pd
 from pymatgen.io.cif import CifWriter
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -45,7 +46,9 @@ class Retriever:
                     raise TypeError 
                 test = requests.get('https://www.materialsproject.org/rest/v2/api_check', header)
                 if not test.json()['response']['api_key_valid']:
-                    print('Invalid MP API KEY')
+                    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+                    logging.critical('Invalid MP API KEY!')
+                    # print('Invalid MP API KEY')
                     self.check_api_key(validity=False)
                     exit()
             except (TypeError, json.decoder.JSONDecodeError):

@@ -2,10 +2,14 @@ __author__ = "O. Leiko"
 
 import os 
 from utilities import Retriever
+import logging.config
 
 
 if 'config.json' not in os.listdir():
     # create config file if it is not in directory
+    logging.config.fileConfig('logging.conf')
+    logger = logging.getLogger()
+    logger.info("creating config.json file \n")
     open('config.json', 'a').close()
 
 reqs = Retriever() #create retriever object

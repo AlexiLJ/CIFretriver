@@ -15,9 +15,28 @@ from pymatgen.electronic_structure.plotter import BSPlotter
 class Retriever:
     
     def __init__(self): 
+        self.logger = logging.getLogger('CIF__retr')
+        self.logger.setLevel(logging.DEBUG)
+            # create logger
+    
 
+        # create console handler and set level to debug
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+
+        # create formatter
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        # add formatter to ch
+        ch.setFormatter(formatter)
+
+        # add ch to logger
+        self.logger.addHandler(ch)
         header = self.API_checker()
         self.mpr = MPRester(header['API_KEY'])
+        #https://docs.python.org/3/howto/logging.html
+
+
          
     def writer(self):
         ''' Writes correct API key into the config.json file '''
@@ -46,7 +65,7 @@ class Retriever:
                     raise TypeError 
                 test = requests.get('https://www.materialsproject.org/rest/v2/api_check', header)
                 if not test.json()['response']['api_key_valid']:
-                    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+                    #logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
                     logging.critical('Invalid MP API KEY!')
                     # print('Invalid MP API KEY')
                     self.check_api_key(validity=False)

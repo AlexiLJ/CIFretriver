@@ -128,3 +128,4 @@ config.json
 
 cif_files/
 csv_data_set_for_elements/
+*.json

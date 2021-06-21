@@ -11,5 +11,5 @@ This python app retrieves data from the Materialproject API
    that will be created or updated automatically;
 6. Then you can insert a material_id, this will retrieve you the conventional standard structure .cif file for requested material;
 7. You can also plot material bandstructure; 
-   If you use linux use: sudo apt-get install python3-tk;
+   If you using linux try: sudo apt-get install python3-tk;
 

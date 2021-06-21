@@ -10,3 +10,6 @@ This python app retrieves data from the Materialproject API
 5. You can save the query with the name 'pretty formula'.csv into the 'csv_data_set_for_elements' directory if you chose to,
    that will be created or updated automatically;
 6. Then you can insert a material_id, this will retrieve you the conventional standard structure .cif file for requested material;
+7. You can also plot material bandstructure; 
+   If you use linux use: sudo apt-get install python3-tk;
+

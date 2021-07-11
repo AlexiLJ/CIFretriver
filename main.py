@@ -25,4 +25,3 @@ reqs.conv_str_cif_retriever(mat_id) # retrieve and save as .cif file required st
 reqs.get_bandstructure(mat_id)
 
 
-

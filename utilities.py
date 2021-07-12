@@ -65,17 +65,24 @@ class Retriever:
         """
         
         results = self.mpr.query({'pretty_formula':f"{formula}"}, properties=['material_id', 'pretty_formula', 'spacegroup.crystal_system', 'spacegroup.symbol'])
-        df=pd.DataFrame.from_records(results)
-        print(df)
-        save = input('Do you want to save query to .csv file? Y/N ')
+        try:
+            df=pd.DataFrame.from_records(results)
+            if not df.empty:
+                print(df)
+                save = input('Do you want to save query to .csv file? Y/N ')
         
-        if save.lower() == 'y':
-            if not os.path.isdir('csv_data_set_for_elements'):
-                os.mkdir('csv_data_set_for_elements')
-                logging.info("creating csc_data_set_for_elements \n")
-            path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
-            df.to_csv(path_file)
-            logging.info("Data query has been saved \n")
+                if save.lower() == 'y':
+                    if not os.path.isdir('csv_data_set_for_elements'):
+                        os.mkdir('csv_data_set_for_elements')
+                        logging.info("creating csc_data_set_for_elements \n")
+                    path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
+                    df.to_csv(path_file)
+                    logging.info("Data query has been saved \n")        
+            else:
+                raise Exception
+        except(Exception):
+            logging.warn('Empty DataFrame! Probably you\'ve passed an incorrect formula!')
+
         
     def get_bandstructure(self, material_id):
         """ This method retrievs and draws band structure of the  required element
@@ -95,21 +102,24 @@ class Retriever:
             of the  required element and saves it as cif_files/... .cif file
             material_id: str
         """
-
-        structure = self.mpr.get_structure_by_material_id(f'{material_id}')
-        space_ga = SpacegroupAnalyzer(structure)
-        conventional_structure = space_ga.get_conventional_standard_structure()
-        write = CifWriter(conventional_structure)
-        if not os.path.isdir('cif_files'):
-            os.mkdir('cif_files')
-            logging.info("creating cif_files directory \n")
-        results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
-        formula=results[0]['pretty_formula']
-        file_path = os.path.join('cif_files', f'{formula}_{material_id}_conventional_standart.cif')
-        write.write_file(file_path)
-        logging.info(f"'{formula}_{material_id}_conventional_standart.cif' has been saved \n")
+        try:
+            structure = self.mpr.get_structure_by_material_id(f'{material_id}')
+            space_ga = SpacegroupAnalyzer(structure)
+            conventional_structure = space_ga.get_conventional_standard_structure()
+            write = CifWriter(conventional_structure)
+            if not os.path.isdir('cif_files'):
+                os.mkdir('cif_files')
+                logging.info("creating cif_files directory \n")
+            results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
+            formula=results[0]['pretty_formula']
+            file_path = os.path.join('cif_files', f'{formula}_{material_id}_conventional_standart.cif')
+            write.write_file(file_path)
+            logging.info(f"'{formula}_{material_id}_conventional_standart.cif' has been saved \n")
+        except:
+            logging.warn('Corrupt ID!')
+            exit()
 
  
 if __name__ == "__main__": 
     test = Retriever()
-    print(test.API_checker())
+    print(test.API_checker(), test.element_q('Yr'))

@@ -81,7 +81,7 @@ class Retriever:
             else:
                 raise Exception
         except(Exception):
-            logging.warn('Empty DataFrame! Probably you\'ve passed an incorrect formula!')
+            logging.error('Empty DataFrame! Probably you\'ve passed an incorrect formula!')
 
         
     def get_bandstructure(self, material_id):
@@ -116,7 +116,7 @@ class Retriever:
             write.write_file(file_path)
             logging.info(f"'{formula}_{material_id}_conventional_standart.cif' has been saved \n")
         except:
-            logging.warn('Corrupt ID!')
+            logging.critical('Corrupt ID!')
             exit()
 
  

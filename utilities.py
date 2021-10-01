@@ -20,7 +20,9 @@ class Retriever:
         header = self.API_checker()
         self.mpr = MPRester(header['API_KEY'])
         #https://docs.python.org/3/howto/logging.html
-         
+        self.PATH_ = os.getcwd()
+
+
     def writer(self):
         ''' Writes correct API key into the config.json file '''
         
@@ -75,7 +77,7 @@ class Retriever:
                     if not os.path.isdir('csv_data_set_for_elements'):
                         os.mkdir('csv_data_set_for_elements')
                         logging.info("creating csc_data_set_for_elements \n")
-                    path_file = os.path.join('csv_data_set_for_elements', f'{formula}.csv')
+                    path_file = os.path.join(self.PATH_, 'csv_data_set_for_elements', f'{formula}.csv')
                     df.to_csv(path_file)
                     logging.info("Data query has been saved \n")        
             else:
@@ -107,12 +109,14 @@ class Retriever:
             space_ga = SpacegroupAnalyzer(structure)
             conventional_structure = space_ga.get_conventional_standard_structure()
             write = CifWriter(conventional_structure)
-            if not os.path.isdir('cif_files'):
-                os.mkdir('cif_files')
+            dir_path=os.path.join(self.PATH_, 'cif_files')
+            if not os.path.isdir(dir_path):
+                os.mkdir(dir_path)
                 logging.info("creating cif_files directory \n")
             results = self.mpr.query({'material_id':f"{material_id}"}, properties=['pretty_formula'])
             formula=results[0]['pretty_formula']
-            file_path = os.path.join('cif_files', f'{formula}_{material_id}_conventional_standart.cif')
+            file_path = os.path.join(os.path.join(self.PATH_, 'cif_files'), f'{formula}_{material_id}_conventional_standart.cif')
+            print(file_path)
             write.write_file(file_path)
             logging.info(f"'{formula}_{material_id}_conventional_standart.cif' has been saved \n")
         except:
@@ -122,4 +126,4 @@ class Retriever:
  
 if __name__ == "__main__": 
     test = Retriever()
-    print(test.API_checker(), test.element_q('Yr'))
+    print(test.API_checker(), test.element_q('Yr'), test.conv_str_cif_retriever('mp-631'))

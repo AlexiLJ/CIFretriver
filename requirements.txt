@@ -29,3 +29,4 @@ sympy==1.8
 tabulate==0.8.9
 uncertainties==3.1.5
 urllib3==1.26.5
+pytest
